@@ -23,4 +23,12 @@
 hs_err_pid*
 replay_pid*
 
+target/
 .DS_Store
+
+# Local/generated database files
+*.db
+
+# Generated study exports
+docs/*.html
+docs/*.pdf
