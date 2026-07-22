@@ -1,8 +1,6 @@
-package dev.jasonguba.esvbible.services;
+package dev.jasonguba.esvbible.completion;
 
 import org.springframework.stereotype.Service;
-
-import dev.jasonguba.esvbible.completion.CompletedChapterRepository;
 
 @Service
 public class CompletedChapterService {
