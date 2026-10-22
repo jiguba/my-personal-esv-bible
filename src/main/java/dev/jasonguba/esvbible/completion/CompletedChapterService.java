@@ -45,14 +45,14 @@ public class CompletedChapterService {
         Optional<BibleBook> maybeBook = BibleBook.findByCode(bookCode);
 
         if (maybeBook.isEmpty()) {
-            throw new IllegalArgumentException("Unknown Bible book code: " + bookCode);
+            throw new UnknownChapterException("Unknown Bible book code: " + bookCode);
         }
 
         BibleBook bibleBook = maybeBook.get();
 
         if (!bibleBook.containsChapter(chapterNumber)) {
-            throw new IllegalArgumentException(
-                "Invalid chapter number " + chapterNumber 
+            throw new UnknownChapterException(
+                "Unknown chapter number " + chapterNumber 
                 + " for book " + 
                 bibleBook.getDisplayName());
         }
