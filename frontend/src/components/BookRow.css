@@ -1,0 +1,24 @@
+.book-section {
+    display: flex;
+    gap: var(--space-6);
+    border-top: 1px solid var(--line);
+    padding: 18px 0;
+}
+
+.book-info {
+    flex: 0 0 220px;
+}
+
+
+.chapter-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, var(--cell-w));
+    gap: var(--cell-gap);
+    align-content: start;
+}
+
+.chapter-cell {
+    height: var(--cell-h);
+    border: 1px solid var(--tile-line);
+}
