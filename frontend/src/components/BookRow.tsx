@@ -1,5 +1,5 @@
 import type { TrackerBook } from "../types";
-import "./BookRow.css"
+import "./BookRow.css";
 
 type BookRowProps = { book: TrackerBook };
 
@@ -12,11 +12,13 @@ export function BookRow({ book }: BookRowProps) {
                 {book.name}: {book.completedChapters.length}/{book.chapterCount}
             </div>
             <div className="chapter-grid">
-                {chapters.map((chapter) =>
-                    <span key={chapter} className="chapter-cell">
-                        {chapter}{book.completedChapters.includes(chapter) ? "✓" : ""}
+                {chapters.map((chapter) => {
+                    const isRead = book.completedChapters.includes(chapter);
+
+                    return <span key={chapter} className={isRead ? "chapter-cell is-read" : "chapter-cell"}>
+                        {isRead ? "✓" : ""}{chapter}
                     </span>
-                )}
+                })}
             </div>
         </li>
     );

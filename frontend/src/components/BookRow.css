@@ -9,7 +9,6 @@
     flex: 0 0 220px;
 }
 
-
 .chapter-grid {
     flex: 1;
     display: grid;
@@ -21,4 +20,18 @@
 .chapter-cell {
     height: var(--cell-h);
     border: 1px solid var(--tile-line);
+    background: var(--surface);
+    border-radius: var(--radius-tile);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 0 var(--space-2);
+    font-size: var(--text-small);
+    font-variant-numeric: tabular-nums;
+}
+
+.chapter-cell.is-read {
+    background: var(--done);
+    border-color: var(--done);
+    color: var(--on-done);
 }
