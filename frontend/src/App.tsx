@@ -22,19 +22,19 @@ function App() {
   if (tracker === null) return <p>Loading…</p>;
 
   return (
-    <section>
+    <main className="page">
       <div>
         <h1>My Personal ESV Bible Tracker</h1>
         <p>Let's begin reading the Bible</p>
         <p>{tracker.summary.completedChapters} of {tracker.summary.totalChapters} chapters read.</p>
         <p>{tracker.summary.completedBooks} of {tracker.summary.totalBooks} books completed.</p>
       </div>
-      <ul>
+      <ul className="book-list">
         {tracker.books.map((book) => (
           <BookRow key={book.code} book={book} />
         ))}
       </ul>
-    </section>
+    </main>
   );
 }
 
