@@ -1,27 +1,9 @@
 import { useState, useEffect } from "react";
-
-type TrackerBook = {
-  code: string;
-  name: string;
-  testament: "OLD" | "NEW";
-  chapterCount: number;
-  completedChapters: number[]
-}
-
-type TrackerSummary = {
-  completedChapters: number;
-  totalChapters: number;
-  completedBooks: number;
-  totalBooks: number
-}
-
-type TrackerResponse = {
-  summary: TrackerSummary;
-  books: TrackerBook[]
-}
+import { BookRow } from "./components/BookRow";
+import type { TrackerResponse } from "./types";
 
 function App() {
-  const [tracker, setTrackerResponse] = useState<TrackerResponse | null>(null);
+  const [tracker, setTracker] = useState<TrackerResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -32,7 +14,7 @@ function App() {
         }
         return response.json();
       })
-      .then((data: TrackerResponse) => setTrackerResponse(data))
+      .then((data: TrackerResponse) => setTracker(data))
       .catch((err) => setError(err.message));
   }, []);
 
@@ -44,11 +26,16 @@ function App() {
       <div>
         <h1>My Personal ESV Bible Tracker</h1>
         <p>Let's begin reading the Bible</p>
-        <p>{tracker.summary.completedChapters} of {tracker.summary.totalChapters} chapters read</p>
+        <p>{tracker.summary.completedChapters} of {tracker.summary.totalChapters} chapters read.</p>
+        <p>{tracker.summary.completedBooks} of {tracker.summary.totalBooks} books completed.</p>
       </div>
-
+      <ul>
+        {tracker.books.map((book) => (
+          <BookRow key={book.code} book={book} />
+        ))}
+      </ul>
     </section>
-  )
+  );
 }
 
-export default App
+export default App;
