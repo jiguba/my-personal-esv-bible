@@ -6,7 +6,7 @@ function App() {
   const [tracker, setTracker] = useState<TrackerResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  function loadTracker() {
     fetch("/api/tracker")
       .then((response) => {
         if (!response.ok) {
@@ -16,6 +16,25 @@ function App() {
       })
       .then((data: TrackerResponse) => setTracker(data))
       .catch((err) => setError(err.message));
+  }
+
+  function handleToggle(bookCode: string, chapter: number, checked: boolean) {
+    const url = `/api/completions/${bookCode}/${chapter}`;
+    const method = checked ? "PUT" : "DELETE";
+
+    fetch(url, { method })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        loadTracker()
+      })
+      .catch((err) => alert(`Couldn't save ${bookCode} ${chapter}: ${err.message}`));
+  }
+
+  useEffect(() => {
+    loadTracker();
   }, []);
 
   if (error !== null) return <p>Could not load tracker: {error}</p>;
@@ -31,7 +50,7 @@ function App() {
       </div>
       <ul className="book-list">
         {tracker.books.map((book) => (
-          <BookRow key={book.code} book={book} />
+          <BookRow key={book.code} book={book} onToggle={handleToggle} />
         ))}
       </ul>
     </main>

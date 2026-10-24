@@ -1,9 +1,12 @@
 import type { TrackerBook } from "../types";
 import "./BookRow.css";
 
-type BookRowProps = { book: TrackerBook };
+type BookRowProps = {
+    book: TrackerBook;
+    onToggle: (bookCode: string, chapter: number, checked: boolean) => void;
+};
 
-export function BookRow({ book }: BookRowProps) {
+export function BookRow({ book, onToggle }: BookRowProps) {
     const chapters = Array.from({ length: book.chapterCount }, (_, i) => i + 1);
 
     return (
@@ -15,9 +18,15 @@ export function BookRow({ book }: BookRowProps) {
                 {chapters.map((chapter) => {
                     const isRead = book.completedChapters.includes(chapter);
 
-                    return <span key={chapter} className={isRead ? "chapter-cell is-read" : "chapter-cell"}>
-                        {isRead ? "✓" : ""}{chapter}
-                    </span>
+                    return <label key={chapter} className={isRead ? "chapter-cell is-read" : "chapter-cell"}>
+                        <input
+                            type="checkbox"
+                            checked={isRead}
+                            onChange={(event) => onToggle(book.code, chapter, event.currentTarget.checked)}
+                            aria-label={`Mark ${book.name} ${chapter} as read`}
+                        />
+                        {isRead ? "✓" : ""} {chapter}
+                    </label>
                 })}
             </div>
         </li>
