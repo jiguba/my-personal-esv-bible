@@ -1,0 +1,145 @@
+/*
+ * My Personal ESV Bible — design tokens
+ * Source: "Foundations" board on the design canvas.
+ * Light is the default. Dark follows the OS setting, and can be forced with
+ * <html data-theme="light"> or <html data-theme="dark">.
+ *
+ * Fonts (add to index.html <head>):
+ * <link rel="preconnect" href="https://fonts.googleapis.com">
+ * <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ * <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+ */
+
+:root {
+  /* Color — light */
+  --bg: #F6F2E9;          /* page background */
+  --surface: #FFFDF8;     /* unread chapter cells, cards, active filter segment */
+  --ink: #1F1C17;         /* body text */
+  --muted: #5F584C;       /* secondary text, counts, labels */
+  --line: #E3DBCC;        /* dividers between books, section rules */
+  --tile-line: #D3C9B5;   /* unread chapter cell border */
+  --track: #E8E0D0;       /* empty part of progress bars */
+  --chip: #ECE5D6;        /* filter control background, loading skeletons */
+  --done: #2B4C7E;        /* read chapters, progress fill, primary buttons */
+  --on-done: #FFFFFF;     /* text/icons on --done */
+  --done-divider: rgba(255, 255, 255, 0.28); /* divider inside a read chapter cell */
+  --accent: #8A5A10;      /* warnings, failed-save outline, verse numbers */
+  --focus: #B07A1E;       /* keyboard focus ring */
+  --toast-bg: #1F1C17;
+  --toast-ink: #F6F2E9;
+
+  /* Type */
+  --font-serif: "Newsreader", Georgia, serif;           /* headings, numbers, scripture */
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;  /* all UI */
+
+  --text-display: 88px;    /* chapters-read number, line-height 0.95 */
+  --text-h1: 56px;         /* reading view title, line-height 1.05 */
+  --text-h2: 36px;         /* testament headings, line-height 1.15 */
+  --text-stat: 34px;       /* summary stats */
+  --text-h3: 22px;         /* book names, line-height 1.2 */
+  --text-scripture: 20px;  /* passage text, line-height 1.7 */
+  --text-body: 15px;       /* default UI, line-height 1.5 */
+  --text-small: 13px;      /* counts, captions, chapter numbers */
+  --text-label: 12px;      /* uppercase labels, letter-spacing 0.12em, weight 600 */
+
+  /* Spacing (4/8 scale) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Radius */
+  --radius-tile: 7px;
+  --radius-control: 8px;   /* buttons, book index chips */
+  --radius-group: 10px;    /* filter group, toast */
+  --radius-card: 14px;
+  --radius-pill: 999px;
+
+  /* Layout */
+  --page-max: 1344px;
+  --page-pad: 48px;        /* 20px on phones */
+  --reading-max: 720px;
+
+  /* Chapter cell */
+  --cell-w: 72px;
+  --cell-h: 34px;
+  --cell-read-w: 26px;     /* the "Read" link on the right of the cell */
+  --cell-gap: 6px;
+
+  /* Motion */
+  --dur-check: 120ms;
+  --dur-bar: 200ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (max-width: 640px) {
+  :root {
+    --page-pad: 20px;
+    --cell-h: 44px;
+    --cell-read-w: 44px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161B;
+    --surface: #1D2027;
+    --ink: #EDE7DA;
+    --muted: #A9A294;
+    --line: #2E323C;
+    --tile-line: #3A3F4B;
+    --track: #2A2E37;
+    --chip: #22262E;
+    --done: #9DBBE6;
+    --on-done: #0F1420;
+    --done-divider: rgba(15, 20, 32, 0.25);
+    --accent: #E3B062;
+    --focus: #E3B062;
+    --toast-bg: #EDE7DA;
+    --toast-ink: #14161B;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #14161B;
+  --surface: #1D2027;
+  --ink: #EDE7DA;
+  --muted: #A9A294;
+  --line: #2E323C;
+  --tile-line: #3A3F4B;
+  --track: #2A2E37;
+  --chip: #22262E;
+  --done: #9DBBE6;
+  --on-done: #0F1420;
+  --done-divider: rgba(15, 20, 32, 0.25);
+  --accent: #E3B062;
+  --focus: #E3B062;
+  --toast-bg: #EDE7DA;
+  --toast-ink: #14161B;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-check: 0ms;
+    --dur-bar: 0ms;
+  }
+}
+
+/* Base */
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.5;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
