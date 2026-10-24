@@ -161,9 +161,27 @@ public class BibleBookTest {
         assertFalse(BibleBook.PHILEMON.containsChapter(2));
     }
 
+    @Test 
+    void everyCodeHasExactlyThreeCharacters() {
+        for (BibleBook book: BibleBook.values()) {
+            int codeLength = book.getCode().length();
+            String bookName = book.getDisplayName();
+            assertEquals(3, codeLength, String.format("Expected 3 %ss but found %d", bookName, codeLength));
+        }
+    }
 
+    @Test
+    void findByCodeReturnsCorrectJohnBook() {
+        var result = BibleBook.findByCode("JHN");
 
+        assertTrue(result.isPresent());
+        assertEquals(BibleBook.JOHN, result.get());
+    }
 
+    @Test
+    void findByCodeReturnsEmptyForOldJohnCode() {
+        var result = BibleBook.findByCode("JOHN");
 
-
+        assertTrue(result.isEmpty());
+    }
 }
