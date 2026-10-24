@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Bible tracker</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+a{color:inherit}
+.tile-input:focus-visible + .tile-face{outline:2px solid #B07A1E;outline-offset:-3px}
+.tile-read:focus-visible,.chip:focus-visible,.seg:focus-visible{outline:2px solid #B07A1E;outline-offset:2px}
+.tile-read:hover{background:rgba(127,127,127,0.14)}
+.chip:hover{border-color:currentColor}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: {{t.bg}}; color: {{t.ink}}; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5">
+
+<header style="max-width: 1344px; margin: 0 auto; padding: 28px 48px 0; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+<div style="display: flex; align-items: center; gap: 10px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C4.5 4.5 8.5 4.3 12 6.5c3.5-2.2 7.5-2 10-1V19c-2.5-1-6.5-1.2-10 1-3.5-2.2-7.5-2-10-1z"></path><path d="M12 6.5V20"></path></svg>
+<span style="font-family: Newsreader, Georgia, serif; font-size: 20px; font-weight: 600; letter-spacing: 0.01em">My Personal ESV Bible</span>
+</div>
+<span style="font-size: 13px; color: {{t.muted}}">Progress saves as you check</span>
+</header>
+
+<section aria-labelledby="summary-h" style="max-width: 1344px; margin: 0 auto; padding: 48px 48px 40px; display: flex; flex-wrap: wrap; gap: 40px 72px; align-items: flex-end">
+<div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+<h1 id="summary-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: {{t.muted}}">Reading progress</h1>
+<div style="display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap">
+<span style="font-family: Newsreader, Georgia, serif; font-size: 88px; font-weight: 500; line-height: 0.95; font-variant-numeric: lining-nums tabular-nums">{{totalDone}}</span>
+<span style="font-size: 18px; color: {{t.muted}}">of 1,189 chapters read</span>
+</div>
+<div style="display: flex; align-items: center; gap: 14px">
+<div role="progressbar" aria-label="Whole Bible" aria-valuemin="0" aria-valuemax="1189" aria-valuenow="{{totalDoneRaw}}" style="flex: 1; height: 10px; border-radius: 99px; background: {{t.track}}; overflow: hidden">
+<div style="height: 100%; width: {{totalPct}}%; background: {{t.done}}; border-radius: 99px"></div>
+</div>
+<span style="font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 52px; text-align: right">{{totalPctLabel}}%</span>
+</div>
+</div>
+<dl style="flex: 1 1 520px; min-width: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px">
+<div style="display: flex; flex-direction: column; gap: 6px; padding-left: 20px; border-left: 1px solid {{t.line}}">
+<dt style="font-size: 13px; color: {{t.muted}}">Books complete</dt>
+<dd style="margin: 0; font-family: Newsreader, Georgia, serif; font-size: 34px; font-weight: 500; line-height: 1.1; font-variant-numeric: tabular-nums">{{booksDone}} <span style="font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; color: {{t.muted}}">/ 66</span></dd>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; padding-left: 20px; border-left: 1px solid {{t.line}}">
+<dt style="font-size: 13px; color: {{t.muted}}">Old Testament</dt>
+<dd style="margin: 0; font-family: Newsreader, Georgia, serif; font-size: 34px; font-weight: 500; line-height: 1.1; font-variant-numeric: tabular-nums">{{otDone}} <span style="font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; color: {{t.muted}}">/ 929</span></dd>
+<div aria-hidden="true" style="height: 4px; border-radius: 99px; background: {{t.track}}; overflow: hidden"><div style="height: 100%; width: {{otPct}}%; background: {{t.done}}"></div></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; padding-left: 20px; border-left: 1px solid {{t.line}}">
+<dt style="font-size: 13px; color: {{t.muted}}">New Testament</dt>
+<dd style="margin: 0; font-family: Newsreader, Georgia, serif; font-size: 34px; font-weight: 500; line-height: 1.1; font-variant-numeric: tabular-nums">{{ntDone}} <span style="font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; color: {{t.muted}}">/ 260</span></dd>
+<div aria-hidden="true" style="height: 4px; border-radius: 99px; background: {{t.track}}; overflow: hidden"><div style="height: 100%; width: {{ntPct}}%; background: {{t.done}}"></div></div>
+</div>
+</dl>
+</section>
+
+<div style="position: sticky; top: 0; z-index: 5; background: {{t.bg}}; border-top: 1px solid {{t.line}}; border-bottom: 1px solid {{t.line}}">
+<div style="max-width: 1344px; margin: 0 auto; padding: 12px 48px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px">
+<div role="group" aria-label="Filter by testament" style="display: inline-flex; flex-wrap: wrap; padding: 4px; gap: 4px; border-radius: 10px; background: {{t.chip}}">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="3">
+<button class="seg" type="button" aria-pressed="{{f.pressed}}" onClick="{{f.pick}}" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: 7px; background: {{f.bg}}; color: {{t.ink}}; box-shadow: {{f.shadow}}; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 8px">{{f.label}} <span style="font-size: 13px; color: {{t.muted}}; font-variant-numeric: tabular-nums">{{f.count}}</span></button>
+</sc-for>
+</div>
+<p style="margin: 0; font-size: 14px; color: {{t.muted}}">{{scopeLine}}</p>
+</div>
+</div>
+
+<nav aria-label="Jump to a book" style="max-width: 1344px; margin: 0 auto; padding: 32px 48px 8px; display: flex; flex-direction: column; gap: 18px">
+<sc-for list="{{mapGroups}}" as="g" hint-placeholder-count="2">
+<div style="display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: flex-start">
+<span style="flex: 0 0 120px; padding-top: 12px; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: {{t.muted}}">{{g.label}}</span>
+<div style="flex: 999 1 600px; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{g.books}}" as="b" hint-placeholder-count="12">
+<a class="chip" href="#book-{{b.code}}" aria-label="{{b.chipLabel}}" style="width: 58px; height: 44px; padding: 0 8px; display: flex; flex-direction: column; justify-content: center; gap: 5px; border: 1px solid {{b.chipBd}}; border-radius: 8px; background: {{b.chipBg}}; color: {{b.chipFg}}; text-decoration: none; font-size: 12px; font-weight: 600; letter-spacing: 0.04em">
+<span>{{b.code}}</span>
+<span aria-hidden="true" style="display: block; height: 3px; border-radius: 99px; background: {{b.chipTrack}}; overflow: hidden"><span style="display: block; height: 100%; width: {{b.pct}}%; background: {{b.chipFill}}"></span></span>
+</a>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</nav>
+
+<main style="max-width: 1344px; margin: 0 auto; padding: 16px 48px 96px">
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="2">
+<section aria-labelledby="t-{{g.key}}" style="padding-top: 48px">
+<div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; padding-bottom: 12px">
+<h2 id="t-{{g.key}}" style="margin: 0; font-family: Newsreader, Georgia, serif; font-size: 36px; font-weight: 500; line-height: 1.15">{{g.label}}</h2>
+<span style="font-size: 14px; color: {{t.muted}}; font-variant-numeric: tabular-nums">{{g.meta}}</span>
+</div>
+<sc-for list="{{g.books}}" as="b" hint-placeholder-count="4">
+<section id="book-{{b.code}}" aria-label="{{b.name}}" style="display: flex; flex-wrap: wrap; gap: 14px 32px; padding: 18px 0; border-top: 1px solid {{t.line}}; scroll-margin-top: 80px">
+<div style="flex: 1 0 220px; max-width: 220px; display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0; font-family: Newsreader, Georgia, serif; font-size: 22px; font-weight: 500; line-height: 1.2">{{b.name}}</h3>
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; color: {{t.muted}}; font-variant-numeric: tabular-nums">
+<span>{{b.doneCount}} / {{b.chapterCount}}</span>
+<sc-if value="{{b.complete}}" hint-placeholder-val="{{false}}">
+<span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 99px; background: {{t.done}}; color: {{t.onDone}}; font-size: 12px; font-weight: 600"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"></path></svg>Complete</span>
+</sc-if>
+</div>
+<div aria-hidden="true" style="height: 4px; border-radius: 99px; background: {{t.track}}; overflow: hidden"><div style="height: 100%; width: {{b.pct}}%; background: {{t.done}}"></div></div>
+</div>
+<ul aria-label="{{b.name}} chapters" style="flex: 999 1 560px; min-width: 0; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, 72px); gap: 6px">
+<sc-for list="{{b.chapters}}" as="c" hint-placeholder-count="13">
+<li style="display: flex; height: 34px; border-radius: 7px; border: 1px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; overflow: hidden">
+<label style="position: relative; flex: 1 1 auto; display: flex; cursor: pointer">
+<input class="tile-input" type="checkbox" checked="{{c.done}}" onChange="{{c.toggle}}" aria-label="{{c.markLabel}}" style="position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer">
+<span class="tile-face" aria-hidden="true" style="flex: 1; display: flex; align-items: center; gap: 4px; padding-left: 7px; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums">
+<sc-if value="{{c.done}}" hint-placeholder-val="{{false}}"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"></path></svg></sc-if>
+<sc-if value="{{c.notDone}}" hint-placeholder-val="{{true}}"><span style="display: inline-block; width: 10px"></span></sc-if>
+{{c.n}}
+</span>
+</label>
+<a class="tile-read" href="Reader.dc.html" aria-label="{{c.readLabel}}" style="flex: 0 0 26px; display: flex; align-items: center; justify-content: center; border-left: 1px solid {{c.div}}; color: {{c.icon}}">
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C4.5 4.5 8.5 4.3 12 6.5c3.5-2.2 7.5-2 10-1V19c-2.5-1-6.5-1.2-10 1-3.5-2.2-7.5-2-10-1z"></path><path d="M12 6.5V20"></path></svg>
+</a>
+</li>
+</sc-for>
+</ul>
+</section>
+</sc-for>
+</section>
+</sc-for>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":7800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var seed = { GEN: 50, EXO: 40, LEV: 27, NUM: 36, DEU: 34, JOS: 24, JDG: 21, RUT: 2, PSA: 41, MAT: 28, MRK: 16, LUK: 24, JHN: 21, ACT: 12 };
+    var done = {};
+    Object.keys(seed).forEach(function (code) {
+      var m = {};
+      for (var i = 1; i <= seed[code]; i++) m[i] = true;
+      done[code] = m;
+    });
+    this.state = { filter: 'ALL', done: done };
+  }
+
+  books() {
+    return [
+      ["GEN","Genesis","OLD",50],["EXO","Exodus","OLD",40],["LEV","Leviticus","OLD",27],["NUM","Numbers","OLD",36],["DEU","Deuteronomy","OLD",34],["JOS","Joshua","OLD",24],["JDG","Judges","OLD",21],["RUT","Ruth","OLD",4],["1SA","1 Samuel","OLD",31],["2SA","2 Samuel","OLD",24],["1KI","1 Kings","OLD",22],["2KI","2 Kings","OLD",25],["1CH","1 Chronicles","OLD",29],["2CH","2 Chronicles","OLD",36],["EZR","Ezra","OLD",10],["NEH","Nehemiah","OLD",13],["EST","Esther","OLD",10],["JOB","Job","OLD",42],["PSA","Psalms","OLD",150],["PRO","Proverbs","OLD",31],["ECC","Ecclesiastes","OLD",12],["SNG","Song of Solomon","OLD",8],["ISA","Isaiah","OLD",66],["JER","Jeremiah","OLD",52],["LAM","Lamentations","OLD",5],["EZK","Ezekiel","OLD",48],["DAN","Daniel","OLD",12],["HOS","Hosea","OLD",14],["JOL","Joel","OLD",3],["AMO","Amos","OLD",9],["OBA","Obadiah","OLD",1],["JON","Jonah","OLD",4],["MIC","Micah","OLD",7],["NAM","Nahum","OLD",3],["HAB","Habakkuk","OLD",3],["ZEP","Zephaniah","OLD",3],["HAG","Haggai","OLD",2],["ZEC","Zechariah","OLD",14],["MAL","Malachi","OLD",4],
+      ["MAT","Matthew","NEW",28],["MRK","Mark","NEW",16],["LUK","Luke","NEW",24],["JHN","John","NEW",21],["ACT","Acts","NEW",28],["ROM","Romans","NEW",16],["1CO","1 Corinthians","NEW",16],["2CO","2 Corinthians","NEW",13],["GAL","Galatians","NEW",6],["EPH","Ephesians","NEW",6],["PHP","Philippians","NEW",4],["COL","Colossians","NEW",4],["1TH","1 Thessalonians","NEW",5],["2TH","2 Thessalonians","NEW",3],["1TI","1 Timothy","NEW",6],["2TI","2 Timothy","NEW",4],["TIT","Titus","NEW",3],["PHM","Philemon","NEW",1],["HEB","Hebrews","NEW",13],["JAS","James","NEW",5],["1PE","1 Peter","NEW",5],["2PE","2 Peter","NEW",3],["1JN","1 John","NEW",5],["2JN","2 John","NEW",1],["3JN","3 John","NEW",1],["JUD","Jude","NEW",1],["REV","Revelation","NEW",22]
+    ];
+  }
+
+  theme() {
+    var dark = {
+      bg: '#14161B', surface: '#1D2027', ink: '#EDE7DA', muted: '#A9A294', line: '#2E323C', tileLine: '#3A3F4B',
+      track: '#2A2E37', done: '#9DBBE6', onDone: '#0F1420', doneLine: 'rgba(15,20,32,0.25)', chip: '#22262E', readIcon: '#A9A294', segOn: '#353A45'
+    };
+    var light = {
+      bg: '#F6F2E9', surface: '#FFFDF8', ink: '#1F1C17', muted: '#5F584C', line: '#E3DBCC', tileLine: '#D3C9B5',
+      track: '#E8E0D0', done: '#2B4C7E', onDone: '#FFFFFF', doneLine: 'rgba(255,255,255,0.28)', chip: '#ECE5D6', readIcon: '#5F584C', segOn: '#FFFDF8'
+    };
+    return this.props.theme === 'dark' ? dark : light;
+  }
+
+  toggle(code, n) {
+    var done = Object.assign({}, this.state.done);
+    var b = Object.assign({}, done[code] || {});
+    if (b[n]) delete b[n]; else b[n] = true;
+    done[code] = b;
+    this.setState({ done: done });
+  }
+
+  renderVals() {
+    var self = this;
+    var t = this.theme();
+    var filter = this.state.filter;
+    var fmt = function (x) { return x.toLocaleString('en-US'); };
+    var totalDone = 0, booksDone = 0, otDone = 0, ntDone = 0, otBooksDone = 0, ntBooksDone = 0;
+
+    var all = this.books().map(function (row) {
+      var code = row[0], name = row[1], test = row[2], count = row[3];
+      var d = self.state.done[code] || {};
+      var dc = 0;
+      var chapters = [];
+      for (var n = 1; n <= count; n++) {
+        var isDone = !!d[n];
+        if (isDone) dc++;
+        chapters.push({
+          n: n, done: isDone, notDone: !isDone,
+          toggle: (function (num) { return function () { self.toggle(code, num); }; })(n),
+          markLabel: 'Mark ' + name + ' ' + n + ' as read',
+          readLabel: 'Read ' + name + ' ' + n,
+          bg: isDone ? t.done : t.surface,
+          fg: isDone ? t.onDone : t.ink,
+          bd: isDone ? t.done : t.tileLine,
+          div: isDone ? t.doneLine : t.line,
+          icon: isDone ? t.onDone : t.readIcon
+        });
+      }
+      var complete = dc === count;
+      totalDone += dc;
+      if (complete) booksDone++;
+      if (test === 'OLD') { otDone += dc; if (complete) otBooksDone++; } else { ntDone += dc; if (complete) ntBooksDone++; }
+      var pct = Math.round((dc / count) * 1000) / 10;
+      return {
+        code: code, name: name, testament: test, chapterCount: count, doneCount: dc, complete: complete, pct: pct, chapters: chapters,
+        chipLabel: name + ', ' + dc + ' of ' + count + ' chapters read',
+        chipBg: complete ? t.done : t.surface,
+        chipFg: complete ? t.onDone : t.ink,
+        chipBd: complete ? t.done : t.line,
+        chipTrack: complete ? t.doneLine : t.track,
+        chipFill: complete ? t.onDone : t.done
+      };
+    });
+
+    var ot = all.filter(function (b) { return b.testament === 'OLD'; });
+    var nt = all.filter(function (b) { return b.testament === 'NEW'; });
+    var groups = [];
+    if (filter !== 'NEW') groups.push({ key: 'ot', label: 'Old Testament', meta: '39 books · ' + otBooksDone + ' complete · ' + fmt(otDone) + ' of 929 chapters', books: ot });
+    if (filter !== 'OLD') groups.push({ key: 'nt', label: 'New Testament', meta: '27 books · ' + ntBooksDone + ' complete · ' + ntDone + ' of 260 chapters', books: nt });
+
+    var mapGroups = groups.map(function (g) { return { label: g.label, books: g.books }; });
+
+    var defs = [['ALL', 'All', '1,189'], ['OLD', 'Old Testament', '929'], ['NEW', 'New Testament', '260']];
+    var filters = defs.map(function (f) {
+      var on = filter === f[0];
+      return {
+        label: f[1], count: f[2], pressed: on ? 'true' : 'false',
+        bg: on ? t.segOn : 'transparent',
+        shadow: on ? '0 1px 2px rgba(0,0,0,0.12)' : 'none',
+        pick: function () { self.setState({ filter: f[0] }); }
+      };
+    });
+
+    var scopeLine = filter === 'ALL'
+      ? 'Showing all 66 books'
+      : filter === 'OLD'
+        ? 'Showing Old Testament · ' + fmt(otDone) + ' of 929 chapters read'
+        : 'Showing New Testament · ' + ntDone + ' of 260 chapters read';
+
+    var totalPct = Math.round((totalDone / 1189) * 1000) / 10;
+    return {
+      t: t,
+      totalDone: fmt(totalDone), totalDoneRaw: totalDone,
+      totalPct: totalPct, totalPctLabel: totalPct.toFixed(1),
+      booksDone: booksDone, otDone: fmt(otDone), ntDone: ntDone,
+      otPct: Math.round((otDone / 929) * 1000) / 10,
+      ntPct: Math.round((ntDone / 260) * 1000) / 10,
+      filters: filters, scopeLine: scopeLine, groups: groups, mapGroups: mapGroups
+    };
+  }
+}
+</script>
+</body>
+</html>

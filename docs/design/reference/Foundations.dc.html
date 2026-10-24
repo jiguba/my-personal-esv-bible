@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Design foundations</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400&amp;display=swap">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1180px; padding: 56px; background: #F6F2E9; color: #1F1C17; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5; display: flex; flex-direction: column; gap: 36px">
+<h1 style="margin: 0; font-family: Newsreader, Georgia, serif; font-size: 40px; font-weight: 500">Foundations</h1>
+
+<section style="display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #5F584C">Color tokens · light / dark</h2>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{swatches}}" as="s" hint-placeholder-count="12">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div aria-hidden="true" style="display: flex; height: 64px; border-radius: 10px; overflow: hidden; border: 1px solid #D3C9B5">
+<span style="flex: 1; background: {{s.light}}"></span>
+<span style="flex: 1; background: {{s.dark}}"></span>
+</div>
+<div style="display: flex; flex-direction: column">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px">--{{s.name}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5F584C">{{s.light}} / {{s.dark}}</span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<div style="display: flex; gap: 48px">
+<section style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #5F584C">Type</h2>
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 24px; border: 1px solid #E3DBCC; border-radius: 14px; background: #FFFDF8">
+<div style="display: flex; align-items: baseline; gap: 16px"><span style="flex: 0 0 120px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5F584C">display 88/1</span><span style="font-family: Newsreader, Georgia, serif; font-size: 64px; font-weight: 500; line-height: 1">376</span></div>
+<div style="display: flex; align-items: baseline; gap: 16px"><span style="flex: 0 0 120px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5F584C">h1 56/1.05</span><span style="font-family: Newsreader, Georgia, serif; font-size: 44px; font-weight: 500; line-height: 1.05">John 3</span></div>
+<div style="display: flex; align-items: baseline; gap: 16px"><span style="flex: 0 0 120px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5F584C">h2 36/1.15</span><span style="font-family: Newsreader, Georgia, serif; font-size: 32px; font-weight: 500">Old Testament</span></div>
+<div style="display: flex; align-items: baseline; gap: 16px"><span style="flex: 0 0 120px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5F584C">h3 22/1.2</span><span style="font-family: Newsreader, Georgia, serif; font-size: 22px; font-weight: 500">Deuteronomy</span></div>
+<div style="display: flex; align-items: baseline; gap: 16px"><span style="flex: 0 0 120px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5F584C">scripture 20/1.7</span><span style="font-family: Newsreader, Georgia, serif; font-size: 20px">Newsreader for passage text</span></div>
+<div style="display: flex; align-items: baseline; gap: 16px"><span style="flex: 0 0 120px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5F584C">ui 15 · 13 · 12</span><span style="font-size: 15px">IBM Plex Sans for controls, counts and labels</span></div>
+</div>
+</section>
+
+<section style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #5F584C">ChapterCell · anatomy and states</h2>
+<div style="display: flex; flex-direction: column; gap: 22px; padding: 24px; border: 1px solid #E3DBCC; border-radius: 14px; background: #FFFDF8">
+<div style="display: flex; align-items: center; gap: 20px">
+<div style="display: flex; width: 144px; height: 68px; border-radius: 12px; border: 1px solid #D3C9B5; background: #FFFDF8; overflow: hidden">
+<span style="flex: 1; display: flex; align-items: center; gap: 8px; padding-left: 14px; font-size: 26px; font-weight: 500"><span style="display: inline-block; width: 20px"></span>12</span>
+<span style="flex: 0 0 52px; display: flex; align-items: center; justify-content: center; border-left: 1px solid #E3DBCC; color: #5F584C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C4.5 4.5 8.5 4.3 12 6.5c3.5-2.2 7.5-2 10-1V19c-2.5-1-6.5-1.2-10 1-3.5-2.2-7.5-2-10-1z"></path><path d="M12 6.5V20"></path></svg></span>
+</div>
+<ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #5F584C">
+<li><strong style="color: #1F1C17; font-weight: 600">Left</strong>: native checkbox under the number. “Mark Genesis 12 as read”</li>
+<li><strong style="color: #1F1C17; font-weight: 600">Right</strong>: link to the reading view. “Read Genesis 12”</li>
+<li>72×34 desktop, 109×44 on phones</li>
+</ul>
+</div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{tileStates}}" as="s" hint-placeholder-count="5">
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; width: 72px; height: 34px; border-radius: 7px; border: {{s.border}}; background: {{s.bg}}; color: {{s.fg}}; opacity: {{s.opacity}}; outline: {{s.outline}}; outline-offset: 2px; overflow: hidden">
+<span style="flex: 1; display: flex; align-items: center; gap: 4px; padding-left: 7px; font-size: 13px; font-weight: 500">
+<sc-if value="{{s.check}}" hint-placeholder-val="{{false}}"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"></path></svg></sc-if>
+<sc-if value="{{s.noCheck}}" hint-placeholder-val="{{true}}"><span style="display: inline-block; width: 10px"></span></sc-if>
+12</span>
+<span style="flex: 0 0 26px; border-left: 1px solid {{s.div}}"></span>
+</div>
+<figcaption style="font-size: 12px; color: #5F584C">{{s.label}}</figcaption>
+</figure>
+</sc-for>
+</div>
+</div>
+</section>
+</div>
+
+<section style="display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #5F584C">Spacing · radius · motion</h2>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 28px; padding: 24px; border: 1px solid #E3DBCC; border-radius: 14px; background: #FFFDF8">
+<sc-for list="{{space}}" as="s" hint-placeholder-count="8">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+<div aria-hidden="true" style="width: {{s.v}}px; height: {{s.v}}px; background: #2B4C7E; border-radius: 2px"></div>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5F584C">{{s.v}}</span>
+</div>
+</sc-for>
+<div style="margin-left: auto; display: flex; flex-direction: column; gap: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5F584C">
+<span>radius: 7 tile · 8 chip/button · 10 control · 14 card · 99 pill</span>
+<span>motion: 120ms check · 200ms bar fill · ease-out · none if reduced-motion</span>
+</div>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var swatches = [
+      { name: 'bg', light: '#F6F2E9', dark: '#14161B' },
+      { name: 'surface', light: '#FFFDF8', dark: '#1D2027' },
+      { name: 'ink', light: '#1F1C17', dark: '#EDE7DA' },
+      { name: 'muted', light: '#5F584C', dark: '#A9A294' },
+      { name: 'line', light: '#E3DBCC', dark: '#2E323C' },
+      { name: 'tile-line', light: '#D3C9B5', dark: '#3A3F4B' },
+      { name: 'track', light: '#E8E0D0', dark: '#2A2E37' },
+      { name: 'chip', light: '#ECE5D6', dark: '#22262E' },
+      { name: 'done', light: '#2B4C7E', dark: '#9DBBE6' },
+      { name: 'on-done', light: '#FFFFFF', dark: '#0F1420' },
+      { name: 'accent', light: '#8A5A10', dark: '#E3B062' },
+      { name: 'focus', light: '#B07A1E', dark: '#E3B062' }
+    ];
+    var tileStates = [
+      { label: 'Unread', bg: '#FFFDF8', fg: '#1F1C17', border: '1px solid #D3C9B5', div: '#E3DBCC', opacity: 1, outline: 'none', check: false, noCheck: true },
+      { label: 'Read', bg: '#2B4C7E', fg: '#FFFFFF', border: '1px solid #2B4C7E', div: 'rgba(255,255,255,0.28)', opacity: 1, outline: 'none', check: true, noCheck: false },
+      { label: 'Keyboard focus', bg: '#FFFDF8', fg: '#1F1C17', border: '1px solid #D3C9B5', div: '#E3DBCC', opacity: 1, outline: '2px solid #B07A1E', check: false, noCheck: true },
+      { label: 'Saving', bg: '#2B4C7E', fg: '#FFFFFF', border: '1px solid #2B4C7E', div: 'rgba(255,255,255,0.28)', opacity: 0.7, outline: 'none', check: true, noCheck: false },
+      { label: 'Couldn’t save', bg: '#FFFDF8', fg: '#1F1C17', border: '1.5px solid #8A5A10', div: '#E3DBCC', opacity: 1, outline: 'none', check: false, noCheck: true }
+    ];
+    var space = [4, 8, 12, 16, 24, 32, 48, 64].map(function (v) { return { v: v }; });
+    return { swatches: swatches, tileStates: tileStates, space: space };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Reading John 3</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+a{color:inherit}
+.nav-link:focus-visible,.mark:focus-visible + .mark-box{outline:2px solid #B07A1E;outline-offset:2px}
+.nav-link:hover{text-decoration:underline}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: {{t.bg}}; color: {{t.ink}}; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5">
+
+<div style="border-bottom: 1px solid {{t.line}}">
+<div style="max-width: 1344px; margin: 0 auto; padding: 14px 48px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<a class="nav-link" href="Main.dc.html#book-JHN" style="min-height: 44px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-size: 14px; font-weight: 500">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+Back to tracker
+</a>
+<span style="font-family: Newsreader, Georgia, serif; font-size: 17px; font-weight: 600">My Personal ESV Bible</span>
+</div>
+</div>
+
+<main style="max-width: 720px; margin: 0 auto; padding: 56px 24px 96px">
+<p style="margin: 0 0 10px; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: {{t.muted}}">New Testament · John · 3 of 21</p>
+<h1 style="margin: 0; font-family: Newsreader, Georgia, serif; font-size: 56px; font-weight: 500; line-height: 1.05">John 3</h1>
+
+<div style="margin-top: 28px; padding: 14px 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid {{t.line}}; border-bottom: 1px solid {{t.line}}">
+<label style="position: relative; min-height: 44px; display: inline-flex; align-items: center; gap: 12px; cursor: pointer; font-size: 15px; font-weight: 500">
+<input class="mark" type="checkbox" checked="{{done}}" onChange="{{toggle}}" style="position: absolute; opacity: 0; width: 24px; height: 24px; margin: 0; cursor: pointer">
+<span class="mark-box" aria-hidden="true" style="width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: 1.5px solid {{boxBd}}; background: {{boxBg}}; color: {{t.onDone}}">
+<sc-if value="{{done}}" hint-placeholder-val="{{true}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"></path></svg></sc-if>
+</span>
+<span>{{markText}}</span>
+</label>
+<nav aria-label="Chapter navigation" style="display: flex; gap: 4px">
+<a class="nav-link" href="#top" style="min-height: 44px; padding: 0 12px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-size: 14px; color: {{t.muted}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>John 2</a>
+<a class="nav-link" href="#top" style="min-height: 44px; padding: 0 12px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-size: 14px; color: {{t.muted}}">John 4<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"></path></svg></a>
+</nav>
+</div>
+
+<article aria-label="Passage text" style="margin-top: 40px; font-family: Newsreader, Georgia, serif; font-size: 20px; line-height: 1.7">
+<p style="margin: 0 0 28px; padding: 10px 14px; border: 1px dashed {{t.tileLine}}; border-radius: 8px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; line-height: 1.5; color: {{t.muted}}">[ESV passage text for John 3 renders here from GET /api/passages/JHN/3 — set in Newsreader 20/34 with section headings and superscript verse numbers]</p>
+<div aria-hidden="true" style="width: 46%; height: 14px; margin: 0 0 22px; border-radius: 4px; background: {{t.headBar}}"></div>
+<sc-for list="{{paras}}" as="p" hint-placeholder-count="4">
+<div aria-hidden="true" style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 30px">
+<sc-for list="{{p.lines}}" as="l" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 8px">
+<sc-if value="{{l.verse}}" hint-placeholder-val="{{false}}"><span style="font-family: 'IBM Plex Sans', sans-serif; font-size: 11px; font-weight: 600; color: {{t.accent}}; font-variant-numeric: tabular-nums">{{l.verse}}</span></sc-if>
+<div style="height: 10px; width: {{l.w}}%; border-radius: 4px; background: {{t.textBar}}"></div>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</article>
+
+<p style="margin: 40px 0 0; padding-top: 16px; border-top: 1px solid {{t.line}}; font-size: 12px; line-height: 1.6; color: {{t.muted}}">[Crossway ESV copyright notice — required wherever ESV text is displayed]</p>
+
+<nav aria-label="Next and previous chapter" style="margin-top: 40px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<a class="nav-link" href="#top" style="min-height: 72px; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; border: 1px solid {{t.tileLine}}; border-radius: 10px; background: {{t.surface}}; text-decoration: none">
+<span style="font-size: 12px; color: {{t.muted}}">Previous</span>
+<span style="font-family: Newsreader, Georgia, serif; font-size: 20px; font-weight: 500">John 2</span>
+</a>
+<a class="nav-link" href="#top" style="min-height: 72px; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; border: 1px solid {{t.tileLine}}; border-radius: 10px; background: {{t.surface}}; text-decoration: none">
+<span style="font-size: 12px; color: {{t.muted}}">Next</span>
+<span style="font-family: Newsreader, Georgia, serif; font-size: 20px; font-weight: 500">John 4</span>
+</a>
+</nav>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":1360}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { done: true };
+  }
+
+  renderVals() {
+    var self = this;
+    var light = { bg: '#F6F2E9', surface: '#FFFDF8', ink: '#1F1C17', muted: '#5F584C', line: '#E3DBCC', tileLine: '#D3C9B5', done: '#2B4C7E', onDone: '#FFFFFF', accent: '#8A5A10', textBar: '#DDD4C3', headBar: '#C9BEA9' };
+    var dark = { bg: '#14161B', surface: '#1D2027', ink: '#EDE7DA', muted: '#A9A294', line: '#2E323C', tileLine: '#3A3F4B', done: '#9DBBE6', onDone: '#0F1420', accent: '#E3B062', textBar: '#2E333D', headBar: '#3B414D' };
+    var t = this.props.theme === 'dark' ? dark : light;
+    var done = this.state.done;
+    var paras = [
+      { lines: [{ verse: '1', w: 96 }, { w: 100 }, { w: 58 }] },
+      { lines: [{ verse: '2', w: 99 }, { w: 94 }, { w: 100 }, { verse: '3', w: 88 }, { w: 41 }] },
+      { lines: [{ verse: '4', w: 97 }, { w: 100 }, { verse: '5', w: 92 }, { w: 98 }, { w: 66 }] },
+      { lines: [{ verse: '6', w: 100 }, { w: 90 }, { verse: '7', w: 95 }, { w: 34 }] }
+    ];
+    return {
+      t: t, done: done, paras: paras,
+      markText: done ? 'Read — John 3 is marked complete' : 'Mark John 3 as read',
+      boxBg: done ? t.done : t.surface,
+      boxBd: done ? t.done : t.muted,
+      toggle: function () { self.setState({ done: !self.state.done }); }
+    };
+  }
+}
+</script>
+</body>
+</html>
