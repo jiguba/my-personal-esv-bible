@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
+import dev.jasonguba.esvbible.models.BibleBook;
+
 @Component
 public class ESVCrosswayClient {
-    private static final String BASE_URL = "https://api.esv.org"; 
+    private static final String BASE_URL = "https://api.esv.org";
     private static final String PASSAGE_PATH = "/v3/passage/text/";
 
     private final RestClient restClient;
@@ -20,12 +22,15 @@ public class ESVCrosswayClient {
         this.apiKey = apiKey;
     }
 
-    public String getPassageText() {
+    public String getChapterText(BibleBook bibleBook, int chapterNumber) {
+        String displayName = bibleBook.getDisplayName();
+        String reference = String.format("%s %d", displayName, chapterNumber);
+
         return restClient
             .get()
             .uri(uriBuilder -> uriBuilder
                 .path(PASSAGE_PATH)
-                .queryParam("q","John+3:16")
+                .queryParam("q", reference)
                 .build())
             .header("Authorization", apiKey)
             .retrieve()
