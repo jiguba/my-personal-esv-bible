@@ -1,18 +1,17 @@
 # Project Progress
 
-Last updated: 2026-06-21
+Last updated: 2026-10-24
 
 ## Mentoring Agreement
 
-- Codex acts as a software architecture and engineering mentor.
-- Codex may review the repository read-only, explain tradeoffs, propose small tickets, and provide limited example snippets.
-- Codex does not implement application code, rewrite files, apply code patches, or commit changes.
-- Jason implements application code and tests; Codex reviews the result afterward.
-- Guiding principles: scale only when necessary, and remember that simple is already complex enough.
+- Claude acts as a senior software engineering mentor, instructor and code reviewer (see `CLAUDE.md`).
+- Claude may inspect the repository read-only, explain concepts and tradeoffs, write tickets, give progressive hints, and review code afterward.
+- Claude does not write application code, modify project files, or commit. Jason implements all code and tests.
+- Guiding principles: scale only when necessary; simple is already complex enough.
 
 ## Product Vision
 
-Replace a Google Sheets Bible-reading tracker with a clean personal application that displays the entire Protestant Bible canon, persists chapter completion, summarizes progress, and opens ESV passage text.
+Replace a Google Sheets Bible-reading tracker with a personal application that displays the entire Protestant Bible canon, persists chapter completion, summarizes progress, and opens ESV passage text.
 
 ## Version 1 Scope
 
@@ -35,45 +34,85 @@ Replace a Google Sheets Bible-reading tracker with a clean personal application 
 - Multiple translations
 - Favorites and streaks
 
+## Current Status
+
+**The core tracker works end to end:** the React page loads all 66 books from Spring Boot, and clicking a chapter saves it to SQLite. The app can replace the Google Sheet for day-to-day tracking.
+
+### Completed milestones
+
+| Area | Milestone | Commit(s) |
+|---|---|---|
+| Backend | Bible catalog enum (`BibleBook`, `Testament`) with integrity tests | `35496cb` |
+| Backend | JPA persistence: `CompletedChapter`, composite key, repository, repository tests | `2bb9670`, `c2cf036` |
+| Backend | Services: `CompletedChapterService` (idempotent complete/incomplete, validation), `TrackerService` (read model + DTOs) | `211e524`–`bbb5321` |
+| Backend | REST endpoints: `GET /api/tracker`, `PUT`/`DELETE /api/completions/{bookCode}/{chapterNumber}` | `2ba6126` |
+| Backend | `UnknownChapterException` mapped to 404 by `ApiExceptionHandler` (`web` package) | `5d23ad9` |
+| Backend | Book codes switched to USFM (`GEN`, `EXO`, `JHN`, ...) with format tests | `a1ce89e` |
+| Frontend | React + TypeScript project with Vite in `frontend/` | `d4c075b` |
+| Frontend | Vite dev proxy: `/api` → `localhost:8080` | `f1a9a4c` |
+| Frontend | Tracker summary loaded from `/api/tracker` with loading and error states | `57ec048` |
+| Frontend | Book list with `BookRow` component and shared types (`types.ts`) | `b4b4081` |
+| Design | V1 design spec (`docs/DESIGN.md`) and reference mockups | `dffd919`, `1783fd8` |
+| Frontend | Design tokens and fonts, page column, BookSection layout, chapter grid, read/unread cell states, automatic dark mode | `6b6f0a9`–`15d0458` |
+| Frontend | Click or keyboard to toggle a chapter: `PUT`/`DELETE`, then refetch; visually hidden checkbox with focus ring | `b2850a1` |
+| Frontend | Testament filter: All / Old / New segmented control (`aria-pressed`), state in `App`, client-side `.filter()` | `a65b4ad` |
+
+### Next ticket (choose one)
+
+- **ESV passage endpoint:** `GET /api/passages/{bookCode}/{chapterNumber}` in Spring, using the existing `ESVCrosswayClient`, with 404 for unknown chapters and a clear error when ESV is down.
+- **SummaryHeader:** progress bar plus OT/NT stats (DESIGN.md §2.1), frontend only.
+
+### Remaining V1 work (rough order)
+
+1. SummaryHeader with progress bars and OT/NT stats (DESIGN.md §2.1)
+2. Reading view: backend `GET /api/passages/{bookCode}/{chapter}`, then router and `PassageView`
+3. Make the ESV API key optional at startup, so the tracker runs without it
+4. Polish: read link per chapter, toast instead of `alert()`, BookIndex, phone layout, loading skeletons
+
 ## Architecture Decisions
 
-- Frontend: React with TypeScript.
-- Backend: Java with Spring Boot REST APIs.
-- Persistence: SQLite.
-- Persistence API: Spring Data JPA with Hibernate, chosen primarily as a learning goal.
-- Deployment: eventually a cloud platform; SQLite requires durable storage and a single application instance.
+- Frontend: React with TypeScript, built with Vite, in `frontend/`.
+- Backend: Java 17, Spring Boot REST APIs, at the repository root.
+- Persistence: SQLite through Spring Data JPA with Hibernate (chosen primarily as a learning goal).
+- Packages are grouped by feature (`completion`, `tracker`, `models`, `clients`), plus a cross-cutting `web` package for API-wide concerns.
+- The immutable Bible catalog is a Java enum, served to React by the backend.
+- **Book codes are USFM standard** (3 characters: `GEN`, `EXO`, `JHN`, `PHM`, ...). They're used in URLs and persistence; never use display names or enum ordinals.
+- Services throw domain exceptions; `ApiExceptionHandler` (`@RestControllerAdvice`) translates them to HTTP statuses. Services know nothing about HTTP.
+- Error responses contain only messages written by the application, never internal exception details.
+- In development, Vite proxies `/api` to Spring Boot, so the browser makes same-origin requests (no CORS configuration).
+- `App` owns the tracker state. After every save it refetches `/api/tracker`, so the backend stays the single source of truth for counts.
+- The testament filter is client-side only. `App` owns the filter state; `TestamentFilter` is a controlled component (value down, change callback up).
+- Styling uses CSS custom properties from `frontend/src/styles/tokens.css` only. No hard-coded colors; dark mode follows the OS.
 - The React client never receives the ESV API credential.
-- Spring Boot owns ESV integration and tracker persistence.
-- The immutable Bible catalog is represented by a Java enum and served to React by the backend.
-- Stable book codes, rather than display names or enum ordinals, are used in URLs and persistence.
+- Deployment (eventually): a cloud platform; SQLite requires durable storage and a single application instance.
 
 ## Persistence Model
 
 `completed_chapter`
 
-- `book_code`: non-null text
+- `book_code`: non-null text (USFM code)
 - `chapter_number`: non-null integer
 - `completed_at`: non-null UTC timestamp
 - Composite primary key: (`book_code`, `chapter_number`)
 - A row exists when a chapter is complete; no row means incomplete.
 - Checking an incomplete chapter creates a row and timestamp.
-- Repeating a check is a no-op and retains the timestamp.
+- Repeating a check is a no-op and keeps the timestamp.
 - Unchecking deletes the row.
 - Rechecking after deletion creates a new timestamp.
-- `completed_at` means the most recent transition from incomplete to complete.
-- The JPA entity will use an embeddable composite ID with value-based `equals` and `hashCode`.
+- `completed_at` means the most recent change from incomplete to complete.
+- Renaming stored values (like book codes) requires a data migration once real data exists.
 
 ## API Contract
 
 - `GET /api/tracker` returns the complete catalog, completion state, and summary.
-- `PUT /api/completions/{bookCode}/{chapterNumber}` ensures a completion exists.
-- `DELETE /api/completions/{bookCode}/{chapterNumber}` ensures a completion does not exist.
-- `GET /api/passages/{bookCode}/{chapterNumber}` retrieves ESV text.
-- Malformed input returns `400 Bad Request`.
-- A well-formed but nonexistent book/chapter returns `404 Not Found`.
+- `PUT /api/completions/{bookCode}/{chapterNumber}` ensures a completion exists (200).
+- `DELETE /api/completions/{bookCode}/{chapterNumber}` ensures a completion does not exist (200).
+- `GET /api/passages/{bookCode}/{chapterNumber}` retrieves ESV text (not built yet).
+- Malformed input (e.g. a non-numeric chapter) returns `400 Bad Request` (Spring default).
+- An unknown book or out-of-range chapter returns `404 Not Found` with a plain-text message.
 - Completion operations are idempotent.
 
-Proposed tracker response:
+Tracker response:
 
 ```json
 {
@@ -95,35 +134,29 @@ Proposed tracker response:
 }
 ```
 
-Completion timestamps are intentionally omitted from this V1 response.
+## Running Locally
 
-## ESV Integration Spike
+1. Backend (repo root), with `ESV_CROSSWAY_API_KEY` set: `mvn spring-boot:run` → `localhost:8080`
+2. Frontend: `cd frontend && npm install && npm run dev` → `localhost:5173`
+3. Tests: `mvn test` (backend), `npm run build` (frontend type check + build)
 
-- The ESV client successfully returned John 3:16.
-- `ESV_CROSSWAY_API_KEY` is supplied through the environment.
-- Local Git history contains the environment placeholder, not a literal credential.
-- The temporary `CommandLineRunner` should be removed because startup must not depend on ESV availability.
+## Known Issues and Technical Debt
 
-## Repository Notes
+- `ESVCrosswayClient` requires `ESV_CROSSWAY_API_KEY` at startup; the app fails to start without it.
+- `target/classes/application.properties` is still tracked by git (committed before `target/` was ignored).
+- No unit tests yet for `CompletedChapterService` or `TrackerService`, and no web-layer tests for the controllers.
+- The "every code is 3 characters" test message reads "Expected 3 Amoss..." and should name the book code clearly.
+- A failed save uses `alert()`, which shows the book code rather than the name.
+- ESLint warns about `loadTracker` missing from the `useEffect` dependency array (fix later with `useCallback`).
+- `TestamentFilter`'s callback prop is named `onClick`; rename it to `onChange` (DESIGN.md §5) because it reports a value change, not a raw click.
+- `TestamentFilter.css` uses a hard-coded shadow color (`rgba(0, 0, 0, 0.12)`), which breaks the "tokens only" rule; add a `--shadow` token (with a dark-mode value) or record the exception.
+- `docs/implementation-milestone-tracker.md` and `docs/progress-study-guide.md` are outdated.
+- The Maven wrapper is missing `.mvn/wrapper/maven-wrapper.properties`; system `mvn` works.
 
-- The Spring Boot backend currently lives at the repository root.
-- The Maven wrapper script exists, but `.mvn/wrapper/maven-wrapper.properties` is missing; system `mvn` currently works.
-- A React frontend has not been created yet.
+## Future Improvements (beyond the current tickets)
 
-## Current Ticket: Bible Catalog
-
-Implement a `BibleBook` enum and focused unit tests before adding JPA or SQLite.
-
-Acceptance criteria:
-
-- Contains all 66 books in canonical order.
-- Each book has a stable code, display name, testament, and chapter count.
-- Supports lookup by stable code.
-- Validates whether a chapter exists.
-- Rejects zero, negative, above-maximum, and unknown chapters/books.
-- Tests include `GEN/50`, `GEN/51`, `JHN/1`, `JHN/21`, and `JHN/22`.
-- Catalog integrity tests verify 66 books, 1,189 chapters, unique codes, and correct testament totals.
-
-## Next Review
-
-After Jason implements the catalog and its tests, Codex will review them read-only. JPA and SQLite setup comes afterward.
+- Reusable `LoadingState` and `ErrorNotice` components with a Retry button, once a second screen needs them.
+- Optimistic updates with a saving state and toast (DESIGN.md §4).
+- Database migrations with Flyway or Liquibase.
+- `React.memo` for `BookSection`, only if measurement shows a performance problem.
+- Prettier for consistent formatting.
