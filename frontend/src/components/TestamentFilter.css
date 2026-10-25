@@ -1,0 +1,24 @@
+.testament-filter-section {
+    background: var(--chip);
+    border-radius: var(--radius-group);
+    padding: var(--space-1);
+    display: inline-flex;
+    gap: var(--space-1);
+}
+
+.testament-filter-section button {
+    border: none;
+    background: transparent;
+    font: inherit;
+    min-height: 40px;
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-control);
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.testament-filter-section button[aria-pressed="true"] {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}

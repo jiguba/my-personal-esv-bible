@@ -1,7 +1,11 @@
+export type Testament = "OLD" | "NEW";
+
+export type TestamentFilterType = "ALL" | Testament;
+
 export type TrackerBook = {
     code: string;
     name: string;
-    testament: "OLD" | "NEW";
+    testament: Testament;
     chapterCount: number;
     completedChapters: number[];
 };
