@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import dev.jasonguba.esvbible.completion.UnknownChapterException;
+import dev.jasonguba.esvbible.models.UnknownChapterException;
 
 @RestControllerAdvice 
 public class ApiExceptionHandler {

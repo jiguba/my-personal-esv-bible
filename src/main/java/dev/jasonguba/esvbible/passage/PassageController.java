@@ -1,7 +1,5 @@
 package dev.jasonguba.esvbible.passage;
 
-import java.util.Optional;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,9 +23,7 @@ public class PassageController {
         @PathVariable String bookCode,
         @PathVariable int chapterNumber
     ) {
-        Optional<BibleBook> maybeBook = BibleBook.findByCode(bookCode);
-
-        BibleBook bibleBook = maybeBook.orElseThrow();
+        BibleBook bibleBook = BibleBook.requireValidChapter(bookCode, chapterNumber);
 
         return esvCrosswayClient.getChapterText(bibleBook, chapterNumber);
     }

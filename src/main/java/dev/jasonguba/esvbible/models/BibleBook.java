@@ -117,4 +117,22 @@ public enum BibleBook {
 
         return Optional.empty();
     }
+
+    public static BibleBook requireValidChapter(String bookCode, int chapterNumber) {
+        Optional<BibleBook> maybeBook = BibleBook.findByCode(bookCode);
+
+        if (maybeBook.isEmpty()) {
+            throw new UnknownChapterException("Unknown Bible book code: " + bookCode);
+        }
+
+        BibleBook book = maybeBook.get();
+        if (!book.containsChapter(chapterNumber)) {
+            throw new UnknownChapterException(
+                "Unknown chapter number " + chapterNumber 
+                + " for book " + 
+                book.getDisplayName());
+        }
+
+        return book;
+    }
 }

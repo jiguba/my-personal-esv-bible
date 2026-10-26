@@ -2,7 +2,6 @@ package dev.jasonguba.esvbible.completion;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -42,20 +41,7 @@ public class CompletedChapterService {
     }
 
     private CompletedChapterId validateAndCreateId(String bookCode, int chapterNumber) {
-        Optional<BibleBook> maybeBook = BibleBook.findByCode(bookCode);
-
-        if (maybeBook.isEmpty()) {
-            throw new UnknownChapterException("Unknown Bible book code: " + bookCode);
-        }
-
-        BibleBook bibleBook = maybeBook.get();
-
-        if (!bibleBook.containsChapter(chapterNumber)) {
-            throw new UnknownChapterException(
-                "Unknown chapter number " + chapterNumber 
-                + " for book " + 
-                bibleBook.getDisplayName());
-        }
+        BibleBook bibleBook = BibleBook.requireValidChapter(bookCode, chapterNumber);
 
         return new CompletedChapterId(bibleBook.getCode(), chapterNumber);
     }

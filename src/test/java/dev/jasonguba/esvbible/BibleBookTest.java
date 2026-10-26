@@ -5,11 +5,13 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import dev.jasonguba.esvbible.models.BibleBook;
 import dev.jasonguba.esvbible.models.Testament;
+import dev.jasonguba.esvbible.models.UnknownChapterException;
 
 public class BibleBookTest {
     
@@ -183,5 +185,27 @@ public class BibleBookTest {
         var result = BibleBook.findByCode("JOHN");
 
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void requireValidChapterReturnsCorrectBook() {
+        var result = BibleBook.requireValidChapter("JHN", 21);
+
+        assertEquals(BibleBook.JOHN, result);
+    }
+
+    @Test
+    void requireValidChapterThrowsForUnknownCode() {
+        assertThrows(UnknownChapterException.class, () -> BibleBook.requireValidChapter("XYZ", 1));
+    }
+
+    @Test
+    void requireValidChapterThrowsExceptionForChapter22() {
+        assertThrows(UnknownChapterException.class, () -> BibleBook.requireValidChapter("JHN", 22));
+    }
+
+    @Test
+    void requireValidChapterThrowsExceptionForChapterZero() {
+        assertThrows(UnknownChapterException.class, () -> BibleBook.requireValidChapter("JHN", 0));
     }
 }
