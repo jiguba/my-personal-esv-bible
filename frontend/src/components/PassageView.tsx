@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { useParams, Link } from "react-router";
-import type { PassageResponse } from "../types";
-import { fetchTracker } from "./api";
-
+import type { PassageResponse, TrackerResponse } from "../types";
+import { fetchTracker } from "../api";
 
 import "./PassageView.css";
 
@@ -14,7 +13,14 @@ type PassageViewState =
 
 export function PassageView() {
     const [state, setState] = useState<PassageViewState>({ status: "loading" });
+    const [tracker, setTracker] = useState<TrackerResponse | null>(null);
     const { bookCode, chapterNumber } = useParams();
+
+    useEffect(() => {
+        fetchTracker()
+            .then((data: TrackerResponse) => setTracker(data))
+            .catch((err) => console.warn(err));
+    }, []);
 
     useEffect(() => {
         if (bookCode === undefined || chapterNumber === undefined) {
@@ -46,6 +52,10 @@ export function PassageView() {
         loadPassage();
     }, [bookCode, chapterNumber]);
 
+    const book = tracker?.books.find((b) => b.code === bookCode);
+    const chapter = Number(chapterNumber);
+    const showHeader = book !== undefined && Number.isInteger(chapter) && chapter >= 1 && chapter <= book.chapterCount;
+
     function renderContent(): ReactNode {
         if (bookCode === undefined || chapterNumber === undefined) {
             return <p>The chapter does not exist.</p>;
@@ -71,7 +81,12 @@ export function PassageView() {
                 </div>
             </header>
             <main className="passage-main">
-                <h1 className="passage-reference">{ }</h1>
+                {showHeader && (
+                    <>
+                        <p className="passage-label">{book.testament === "OLD" ? "Old Testament" : "New Testament"} · {book.name} · {chapter} of {book.chapterCount}</p>
+                        <h1 className="passage-reference">{book.name} {chapter}</h1>
+                    </>
+                )}
                 {renderContent()}
             </main>
         </div>

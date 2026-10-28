@@ -22,6 +22,15 @@
     padding: 56px var(--space-6) 96px;
 }
 
+.passage-label {
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 10px;
+}
+
 .passage-reference {
     font-family: var(--font-serif);
     font-size: var(--text-h1);

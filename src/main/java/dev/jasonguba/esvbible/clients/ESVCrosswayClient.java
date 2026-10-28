@@ -43,6 +43,7 @@ public class ESVCrosswayClient {
                 .uri(uriBuilder -> uriBuilder
                     .path(PASSAGE_PATH)
                     .queryParam("q", reference)
+                    .queryParam("include-passage-references", false)
                     .build())
                 .header("Authorization", apiKey)
                 .retrieve()
