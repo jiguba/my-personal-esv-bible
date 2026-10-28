@@ -21,3 +21,8 @@ export type TrackerResponse = {
     summary: TrackerSummary;
     books: TrackerBook[];
 };
+
+export type PassageResponse = {
+    reference: string;
+    text: string;
+}
