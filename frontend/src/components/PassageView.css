@@ -1,3 +1,39 @@
-.passage-section {
+.passage-header {
+    border-bottom: 1px solid var(--line);
+    padding: 20px var(--page-pad);
+    font-weight: 500;
+}
+
+.passage-header-inner {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.passage-app-name {
+    font-family: var(--font-serif);
+}
+
+.passage-main {
+    max-width: var(--reading-max);
+    margin: 0 auto;
+    padding: 56px var(--space-6) 96px;
+}
+
+.passage-reference {
+    font-family: var(--font-serif);
+    font-size: var(--text-h1);
+    font-weight: 500;
+    line-height: 1.05;
+    margin: 0;
+}
+
+.passage-text {
+    font-family: var(--font-serif);
+    font-size: var(--text-scripture);
+    line-height: 1.7;
+    margin-top: 40px;
     white-space: pre-wrap;
 }

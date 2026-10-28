@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { BookRow } from "./components/BookRow";
 import { TestamentFilter } from "./components/TestamentFilter";
 import type { TrackerResponse, TestamentFilterType } from "./types";
+import { fetchTracker } from "./api";
 
 function App() {
   const [tracker, setTracker] = useState<TrackerResponse | null>(null);
@@ -9,13 +10,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   function loadTracker() {
-    fetch("/api/tracker")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-        return response.json();
-      })
+    fetchTracker()
       .then((data: TrackerResponse) => setTracker(data))
       .catch((err) => setError(err.message));
   }

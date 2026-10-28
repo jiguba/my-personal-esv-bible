@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
+import type { ReactNode } from "react";
 import { useParams, Link } from "react-router";
 import type { PassageResponse } from "../types";
+import { fetchTracker } from "./api";
+
 
 import "./PassageView.css";
 
@@ -43,38 +46,34 @@ export function PassageView() {
         loadPassage();
     }, [bookCode, chapterNumber]);
 
-    if (bookCode === undefined || chapterNumber === undefined) {
-        return (
-            <>
-                <p>The chapter does not exist.</p>
-                <Link to="/">Back to tracker</Link>
-            </>
-        );
-    }
+    function renderContent(): ReactNode {
+        if (bookCode === undefined || chapterNumber === undefined) {
+            return <p>The chapter does not exist.</p>;
+        }
 
-    if (state.status === "loading") {
-        return (
-            <>
-                <p>Loading…</p>
-                <Link to="/">Back to tracker</Link>
-            </>
-        );
-    }
+        if (state.status === "loading") {
+            return <p>Loading…</p>;
+        }
 
-    if (state.status === "failed") {
-        return (
-            <>
-                <p>{state.reason === "notFound" ? "The chapter does not exist." : "The passage text isn't available right now. Your progress is not affected."}</p>
-                <Link to="/">Back to tracker</Link>
-            </>
-        );
+        if (state.status === "failed") {
+            return <p>{state.reason === "notFound" ? "The chapter does not exist." : "The passage text isn't available right now. Your progress is not affected."}</p>;
+        }
+
+        return <article className="passage-text">{state.passageResponse.text}</article>;
     }
 
     return (
-        <>
-            <h1>{state.passageResponse.reference}</h1>
-            <div className="passage-section">{state.passageResponse.text}</div>
-            <Link to="/">Back to tracker</Link>
-        </>
+        <div className="passage-view">
+            <header className="passage-header">
+                <div className="passage-header-inner">
+                    <Link className="passage-back-link" to="/">Back to tracker</Link>
+                    <span className="passage-app-name">ESV Bible Tracker</span>
+                </div>
+            </header>
+            <main className="passage-main">
+                <h1 className="passage-reference">{ }</h1>
+                {renderContent()}
+            </main>
+        </div>
     );
 }
