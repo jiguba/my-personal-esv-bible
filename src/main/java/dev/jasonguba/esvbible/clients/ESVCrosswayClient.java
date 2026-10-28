@@ -3,6 +3,7 @@ package dev.jasonguba.esvbible.clients;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 import dev.jasonguba.esvbible.models.BibleBook;
 
@@ -23,17 +24,21 @@ public class ESVCrosswayClient {
     }
 
     public String getChapterText(BibleBook bibleBook, int chapterNumber) {
-        String displayName = bibleBook.getDisplayName();
-        String reference = String.format("%s %d", displayName, chapterNumber);
-
-        return restClient
-            .get()
-            .uri(uriBuilder -> uriBuilder
-                .path(PASSAGE_PATH)
-                .queryParam("q", reference)
-                .build())
-            .header("Authorization", apiKey)
-            .retrieve()
-            .body(String.class);
+        try {
+            String displayName = bibleBook.getDisplayName();
+            String reference = String.format("%s %d", displayName, chapterNumber);
+   
+            return restClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                    .path(PASSAGE_PATH)
+                    .queryParam("q", reference)
+                    .build())
+                .header("Authorization", apiKey)
+                .retrieve()
+                .body(String.class);
+        } catch (RestClientException e) {
+            throw new FailedPassageTextFetchException("Could not get passage text.", e);
+        }
     }
 }
