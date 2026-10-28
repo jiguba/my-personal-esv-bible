@@ -36,10 +36,9 @@ public class ESVCrosswayClient {
         }
         
         try {
-            String displayName = bibleBook.getDisplayName();
-            String reference = String.format("%s %d", displayName, chapterNumber);
+            String reference = bibleBook.buildReference(chapterNumber);
    
-            return restClient
+            ESVCrosswayResponse response = restClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
                     .path(PASSAGE_PATH)
@@ -47,7 +46,13 @@ public class ESVCrosswayClient {
                     .build())
                 .header("Authorization", apiKey)
                 .retrieve()
-                .body(String.class);
+                .body(ESVCrosswayResponse.class);
+
+            if (response == null || response.passages() == null || response.passages().isEmpty()) {
+                throw new FailedPassageTextFetchException("ESV returned no passage text.");
+            }
+
+            return response.passages().get(0);
         } catch (RestClientException e) {
             throw new FailedPassageTextFetchException("Could not get passage text.", e);
         }

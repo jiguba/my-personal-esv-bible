@@ -19,13 +19,16 @@ public class PassageController {
     }
 
     @GetMapping("/{bookCode}/{chapterNumber}")
-    public String getChapterText(
+    public PassageResponse getPassage(
         @PathVariable String bookCode,
         @PathVariable int chapterNumber
     ) {
         BibleBook bibleBook = BibleBook.requireValidChapter(bookCode, chapterNumber);
 
-        return esvCrosswayClient.getChapterText(bibleBook, chapterNumber);
+        String text = esvCrosswayClient.getChapterText(bibleBook, chapterNumber);
+        String reference = bibleBook.buildReference(chapterNumber);
+        
+        return new PassageResponse(reference, text);
     }
 
 }

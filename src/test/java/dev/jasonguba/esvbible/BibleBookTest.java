@@ -208,4 +208,11 @@ public class BibleBookTest {
     void requireValidChapterThrowsExceptionForChapterZero() {
         assertThrows(UnknownChapterException.class, () -> BibleBook.requireValidChapter("JHN", 0));
     }
+
+    @Test
+    void buildReferenceCombinesDisplayNameAndChapter() {
+        var reference = BibleBook.ONEJOHN.buildReference(3);
+
+        assertEquals("1 John 3", reference);
+    }
 }

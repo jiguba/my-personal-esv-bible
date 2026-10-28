@@ -135,4 +135,8 @@ public enum BibleBook {
 
         return book;
     }
+
+    public String buildReference(int chapterNumber) {
+        return String.format("%s %d", this.displayName, chapterNumber);
+    }
 }
