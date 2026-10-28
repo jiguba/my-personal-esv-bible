@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { BookRow } from "./components/BookRow";
 import { TestamentFilter } from "./components/TestamentFilter";
 import type { TrackerResponse, TestamentFilterType } from "./types";
-import { fetchTracker } from "./api";
+import { fetchTracker, setChapterCompletion } from "./api";
 
 function App() {
   const [tracker, setTracker] = useState<TrackerResponse | null>(null);
@@ -15,18 +15,9 @@ function App() {
       .catch((err) => setError(err.message));
   }
 
-  function handleToggle(bookCode: string, chapter: number, checked: boolean) {
-    const url = `/api/completions/${bookCode}/${chapter}`;
-    const method = checked ? "PUT" : "DELETE";
-
-    fetch(url, { method })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        loadTracker()
-      })
+  function handleToggle(bookCode: string, chapter: number, completed: boolean) {
+    setChapterCompletion(bookCode, chapter, completed)
+      .then(() => loadTracker())
       .catch((err) => alert(`Couldn't save ${bookCode} ${chapter}: ${err.message}`));
   }
 

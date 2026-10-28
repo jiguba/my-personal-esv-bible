@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { useParams, Link } from "react-router";
 import type { PassageResponse, TrackerResponse } from "../types";
-import { fetchTracker } from "../api";
+import { fetchTracker, setChapterCompletion } from "../api";
 
 import "./PassageView.css";
 
@@ -72,6 +72,17 @@ export function PassageView() {
         return <article className="passage-text">{state.passageResponse.text}</article>;
     }
 
+    function handleMarkRead(completed: boolean) {
+        if (book === undefined) {
+            return;
+        }
+
+        setChapterCompletion(book.code, chapter, completed)
+            .then(() => fetchTracker())
+            .then((data) => setTracker(data))
+            .catch((err) => alert(`Couldn't save ${book.name} ${chapter}: ${err.message}`));
+    }
+
     return (
         <div className="passage-view">
             <header className="passage-header">
@@ -85,6 +96,13 @@ export function PassageView() {
                     <>
                         <p className="passage-label">{book.testament === "OLD" ? "Old Testament" : "New Testament"} · {book.name} · {chapter} of {book.chapterCount}</p>
                         <h1 className="passage-reference">{book.name} {chapter}</h1>
+                        <label className="passage-mark-read">
+                            <input
+                                type="checkbox"
+                                checked={book.completedChapters.includes(chapter)}
+                                onChange={(event) => handleMarkRead(event.currentTarget.checked)} />
+                            Mark as read
+                        </label>
                     </>
                 )}
                 {renderContent()}
