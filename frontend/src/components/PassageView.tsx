@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useParams, Link } from "react-router";
 import type { PassageResponse, TrackerResponse } from "../types";
 import { fetchTracker, setChapterCompletion } from "../api";
+import { findNextChapter, findPreviousChapter } from "../chapterNavigation";
 
 import "./PassageView.css";
 
@@ -56,6 +57,9 @@ export function PassageView() {
     const chapter = Number(chapterNumber);
     const showHeader = book !== undefined && Number.isInteger(chapter) && chapter >= 1 && chapter <= book.chapterCount;
 
+    const previousChapter = findPreviousChapter(tracker?.books ?? [], book?.code ?? "", chapter);
+    const nextChapter = findNextChapter(tracker?.books ?? [], book?.code ?? "", chapter);
+
     function renderContent(): ReactNode {
         if (bookCode === undefined || chapterNumber === undefined) {
             return <p>The chapter does not exist.</p>;
@@ -96,13 +100,27 @@ export function PassageView() {
                     <>
                         <p className="passage-label">{book.testament === "OLD" ? "Old Testament" : "New Testament"} · {book.name} · {chapter} of {book.chapterCount}</p>
                         <h1 className="passage-reference">{book.name} {chapter}</h1>
-                        <label className="passage-mark-read">
-                            <input
-                                type="checkbox"
-                                checked={book.completedChapters.includes(chapter)}
-                                onChange={(event) => handleMarkRead(event.currentTarget.checked)} />
-                            Mark as read
-                        </label>
+                        <div className="passage-actions">
+                            <label className="passage-mark-read">
+                                <input
+                                    type="checkbox"
+                                    checked={book.completedChapters.includes(chapter)}
+                                    onChange={(event) => handleMarkRead(event.currentTarget.checked)} />
+                                Mark as read
+                            </label>
+                            <nav className="passage-chapter-nav" aria-label="Chapter navigation">
+                                {previousChapter && (
+                                    <Link className="passage-nav-link" to={`/read/${previousChapter.book.code}/${previousChapter.chapter}`}>
+                                        ‹ {previousChapter.book.name} {previousChapter.chapter}
+                                    </Link>
+                                )}
+                                {nextChapter && (
+                                    <Link className="passage-nav-link" to={`/read/${nextChapter.book.code}/${nextChapter.chapter}`}>
+                                        {nextChapter.book.name} {nextChapter.chapter} ›
+                                    </Link>
+                                )}
+                            </nav>
+                        </div>
                     </>
                 )}
                 {renderContent()}
