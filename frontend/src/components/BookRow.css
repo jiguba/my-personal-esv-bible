@@ -23,12 +23,8 @@
     background: var(--surface);
     border-radius: var(--radius-tile);
     display: flex;
-    align-items: center;
-    gap: var(--space-1);
-    padding: 0 var(--space-2);
-    font-size: var(--text-small);
-    font-variant-numeric: tabular-nums;
     position: relative;
+    overflow: hidden;
 }
 
 .chapter-cell input {
@@ -48,4 +44,35 @@
 .chapter-cell:has(input:focus-visible) {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
+}
+
+.chapter-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 0 var(--space-2);
+    font-size: var(--text-small);
+    font-variant-numeric: tabular-nums;
+    flex: 1;
+    cursor: pointer;
+}
+
+.chapter-read-link {
+    width: var(--cell-read-w);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid var(--tile-line);
+    color: var(--muted);
+    text-decoration: none;
+}
+
+.chapter-cell.is-read .chapter-read-link {
+    border-left-color: var(--done-divider);
+    color: var(--on-done);
+}
+
+.chapter-read-link:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: -2px;
 }

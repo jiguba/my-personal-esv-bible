@@ -1,4 +1,5 @@
 import type { TrackerBook } from "../types";
+import { Link } from "react-router";
 import "./BookRow.css";
 
 type BookRowProps = {
@@ -18,15 +19,20 @@ export function BookRow({ book, onToggle }: BookRowProps) {
                 {chapters.map((chapter) => {
                     const isRead = book.completedChapters.includes(chapter);
 
-                    return <label key={chapter} className={isRead ? "chapter-cell is-read" : "chapter-cell"}>
-                        <input
-                            type="checkbox"
-                            checked={isRead}
-                            onChange={(event) => onToggle(book.code, chapter, event.currentTarget.checked)}
-                            aria-label={`Mark ${book.name} ${chapter} as read`}
-                        />
-                        {isRead ? "✓" : ""} {chapter}
-                    </label>
+                    return <div key={chapter} className={isRead ? "chapter-cell is-read" : "chapter-cell"}>
+                        <label className="chapter-toggle">
+                            <input
+                                type="checkbox"
+                                checked={isRead}
+                                onChange={(event) => onToggle(book.code, chapter, event.currentTarget.checked)}
+                                aria-label={`Mark ${book.name} ${chapter} as read`}
+                            />
+                            {isRead ? "✓" : ""} {chapter}
+                        </label>
+                        <Link className="chapter-read-link" to={`/read/${book.code}/${chapter}`} aria-label={`Read ${book.name} ${chapter}`}>
+                            ›
+                        </Link>
+                    </div>
                 })}
             </div>
         </li>
