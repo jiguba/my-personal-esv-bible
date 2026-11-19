@@ -9,8 +9,8 @@ import "./PassageView.css";
 
 type PassageViewState =
     | { status: "loading" }
-    | { status: "loaded"; passageResponse: PassageResponse }
-    | { status: "failed"; reason: "notFound" | "unavailable" };
+    | { status: "loaded"; passageResponse: PassageResponse; chapterKey: string }
+    | { status: "failed"; reason: "notFound" | "unavailable"; chapterKey: string };
 
 export function PassageView() {
     const [state, setState] = useState<PassageViewState>({ status: "loading" });
@@ -28,33 +28,51 @@ export function PassageView() {
             return;
         }
 
+        let ignore = false;
+        const chapterKey = `${bookCode}/${chapterNumber}`;
+
         async function loadPassage() {
             try {
                 const response = await fetch(`/api/passages/${bookCode}/${chapterNumber}`);
 
+                if (ignore) {
+                    return;
+                }
+
                 if (response.status === 404) {
-                    setState({ status: "failed", reason: "notFound" });
+                    setState({ status: "failed", reason: "notFound", chapterKey: chapterKey });
                     return;
                 }
 
                 if (!response.ok) {
-                    setState({ status: "failed", reason: "unavailable" });
+                    setState({ status: "failed", reason: "unavailable", chapterKey: chapterKey });
                     return;
                 }
 
                 const data: PassageResponse = await response.json();
 
-                setState({ status: "loaded", passageResponse: data });
+                if (ignore) {
+                    return;
+                }
+
+                setState({ status: "loaded", passageResponse: data, chapterKey: chapterKey });
             } catch {
-                setState({ status: "failed", reason: "unavailable" });
+                if (!ignore) {
+                    setState({ status: "failed", reason: "unavailable", chapterKey: chapterKey });
+                }
             }
         }
 
         loadPassage();
+
+        return () => {
+            ignore = true;
+        }
     }, [bookCode, chapterNumber]);
 
     const book = tracker?.books.find((b) => b.code === bookCode);
     const chapter = Number(chapterNumber);
+    const currentChapterKey = `${bookCode}/${chapterNumber}`;
     const showHeader = book !== undefined && Number.isInteger(chapter) && chapter >= 1 && chapter <= book.chapterCount;
 
     const previousChapter = findPreviousChapter(tracker?.books ?? [], book?.code ?? "", chapter);
@@ -65,7 +83,7 @@ export function PassageView() {
             return <p>The chapter does not exist.</p>;
         }
 
-        if (state.status === "loading") {
+        if (state.status === "loading" || state.chapterKey !== currentChapterKey) {
             return <p>Loading…</p>;
         }
 

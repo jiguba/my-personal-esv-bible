@@ -1,6 +1,6 @@
 # Project Progress
 
-Last updated: 2026-10-24
+Last updated: 2026-10-28
 
 ## Mentoring Agreement
 
@@ -38,6 +38,8 @@ Replace a Google Sheets Bible-reading tracker with a personal application that d
 
 **The core tracker works end to end:** the React page loads all 66 books from Spring Boot, and clicking a chapter saves it to SQLite. The app can replace the Google Sheet for day-to-day tracking.
 
+**The ESV passage backend is done:** `GET /api/passages/{bookCode}/{chapterNumber}` returns chapter text, 404 for unknown chapters, and 503 when ESV is unavailable or no key is configured. The frontend doesn't call it yet.
+
 ### Completed milestones
 
 | Area | Milestone | Commit(s) |
@@ -56,18 +58,21 @@ Replace a Google Sheets Bible-reading tracker with a personal application that d
 | Frontend | Design tokens and fonts, page column, BookSection layout, chapter grid, read/unread cell states, automatic dark mode | `6b6f0a9`–`15d0458` |
 | Frontend | Click or keyboard to toggle a chapter: `PUT`/`DELETE`, then refetch; visually hidden checkbox with focus ring | `b2850a1` |
 | Frontend | Testament filter: All / Old / New segmented control (`aria-pressed`), state in `App`, client-side `.filter()` | `a65b4ad` |
+| Backend | `GET /api/passages/{bookCode}/{chapterNumber}` fetches chapter text through `ESVCrosswayClient` | `e73569d` |
+| Backend | Shared chapter validation in `BibleBook.requireValidChapter` (unknown book or chapter → 404), with `BibleBookTest` | `b55d90a` |
+| Backend | ESV failures (HTTP error or no network) become `FailedPassageTextFetchException` (cause chained), mapped to 503 and logged | `a2ad893` |
+| Backend | ESV key optional at startup: empty default, startup warning, short-circuit to 503 before any HTTP call, `ESVCrosswayClientTest` | pending commit |
 
-### Next ticket (choose one)
+### Next ticket
 
-- **ESV passage endpoint:** `GET /api/passages/{bookCode}/{chapterNumber}` in Spring, using the existing `ESVCrosswayClient`, with 404 for unknown chapters and a clear error when ESV is down.
-- **SummaryHeader:** progress bar plus OT/NT stats (DESIGN.md §2.1), frontend only.
+- **Frontend reading view:** open a chapter, fetch `/api/passages/{bookCode}/{chapterNumber}`, and show the text, with loading, success and failure (404 and 503) states.
 
 ### Remaining V1 work (rough order)
 
-1. SummaryHeader with progress bars and OT/NT stats (DESIGN.md §2.1)
-2. Reading view: backend `GET /api/passages/{bookCode}/{chapter}`, then router and `PassageView`
-3. Make the ESV API key optional at startup, so the tracker runs without it
-4. Polish: read link per chapter, toast instead of `alert()`, BookIndex, phone layout, loading skeletons
+1. Reading view in the frontend: router and `PassageView`
+2. SummaryHeader with progress bars and OT/NT stats (DESIGN.md §2.1); the summary is currently shown as plain text in `App`
+3. Polish: read link per chapter, toast instead of `alert()`, BookIndex, phone layout, loading skeletons
+4. `PassageControllerTest` (`@WebMvcTest`, including client throws → 503), deliberately saved for last
 
 ## Architecture Decisions
 
@@ -84,6 +89,8 @@ Replace a Google Sheets Bible-reading tracker with a personal application that d
 - The testament filter is client-side only. `App` owns the filter state; `TestamentFilter` is a controlled component (value down, change callback up).
 - Styling uses CSS custom properties from `frontend/src/styles/tokens.css` only. No hard-coded colors; dark mode follows the OS.
 - The React client never receives the ESV API credential.
+- ESV is an optional dependency, so the app degrades gracefully instead of failing fast: a missing key or ESV outage affects only passages (503), never the tracker.
+- External-service errors are translated at the client boundary: `ESVCrosswayClient` wraps `RestClientException` in `FailedPassageTextFetchException` and keeps the original as the cause for logging.
 - Deployment (eventually): a cloud platform; SQLite requires durable storage and a single application instance.
 
 ## Persistence Model
@@ -107,9 +114,10 @@ Replace a Google Sheets Bible-reading tracker with a personal application that d
 - `GET /api/tracker` returns the complete catalog, completion state, and summary.
 - `PUT /api/completions/{bookCode}/{chapterNumber}` ensures a completion exists (200).
 - `DELETE /api/completions/{bookCode}/{chapterNumber}` ensures a completion does not exist (200).
-- `GET /api/passages/{bookCode}/{chapterNumber}` retrieves ESV text (not built yet).
+- `GET /api/passages/{bookCode}/{chapterNumber}` retrieves ESV text (200).
 - Malformed input (e.g. a non-numeric chapter) returns `400 Bad Request` (Spring default).
 - An unknown book or out-of-range chapter returns `404 Not Found` with a plain-text message.
+- When ESV is unavailable or no key is configured, the passage endpoint returns `503 Service Unavailable` with a plain-text message; tracker and completion endpoints are unaffected.
 - Completion operations are idempotent.
 
 Tracker response:
@@ -136,15 +144,15 @@ Tracker response:
 
 ## Running Locally
 
-1. Backend (repo root), with `ESV_CROSSWAY_API_KEY` set: `mvn spring-boot:run` → `localhost:8080`
+1. Backend (repo root): `mvn spring-boot:run` → `localhost:8080`. Set `ESV_CROSSWAY_API_KEY` to read passages; without it the app starts, logs a warning, and passages return 503.
 2. Frontend: `cd frontend && npm install && npm run dev` → `localhost:5173`
 3. Tests: `mvn test` (backend), `npm run build` (frontend type check + build)
 
 ## Known Issues and Technical Debt
 
-- `ESVCrosswayClient` requires `ESV_CROSSWAY_API_KEY` at startup; the app fails to start without it.
 - `target/classes/application.properties` is still tracked by git (committed before `target/` was ignored).
 - No unit tests yet for `CompletedChapterService` or `TrackerService`, and no web-layer tests for the controllers.
+- `ESVCrosswayClientTest` shows ESV wasn't called only indirectly (null cause); if the guard were removed, the test would make a real network call. `MockRestServiceServer` could prove "no request" directly.
 - The "every code is 3 characters" test message reads "Expected 3 Amoss..." and should name the book code clearly.
 - A failed save uses `alert()`, which shows the book code rather than the name.
 - ESLint warns about `loadTracker` missing from the `useEffect` dependency array (fix later with `useCallback`).
