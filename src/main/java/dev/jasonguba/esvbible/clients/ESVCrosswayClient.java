@@ -44,6 +44,8 @@ public class ESVCrosswayClient {
                     .path(PASSAGE_PATH)
                     .queryParam("q", reference)
                     .queryParam("include-passage-references", false)
+                    .queryParam("include-footnotes", false)            
+                    .queryParam("indent-paragraphs", 0)            
                     .build())
                 .header("Authorization", apiKey)
                 .retrieve()
