@@ -50,11 +50,12 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
-    padding: 0 var(--space-2);
+    padding: 0 var(--space-1);
     font-size: var(--text-small);
     font-variant-numeric: tabular-nums;
     flex: 1;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .chapter-read-link {
@@ -65,6 +66,7 @@
     border-left: 1px solid var(--tile-line);
     color: var(--muted);
     text-decoration: none;
+    flex-shrink: 0;
 }
 
 .chapter-cell.is-read .chapter-read-link {

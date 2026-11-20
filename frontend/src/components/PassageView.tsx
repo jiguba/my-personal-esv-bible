@@ -15,6 +15,7 @@ type PassageViewState =
 export function PassageView() {
     const [state, setState] = useState<PassageViewState>({ status: "loading" });
     const [tracker, setTracker] = useState<TrackerResponse | null>(null);
+    const [attempt, setAttempt] = useState(0);
     const { bookCode, chapterNumber } = useParams();
 
     useEffect(() => {
@@ -29,7 +30,7 @@ export function PassageView() {
         }
 
         let ignore = false;
-        const chapterKey = `${bookCode}/${chapterNumber}`;
+        const chapterKey = `${bookCode}/${chapterNumber}/${attempt}`;
 
         async function loadPassage() {
             try {
@@ -68,15 +69,19 @@ export function PassageView() {
         return () => {
             ignore = true;
         }
-    }, [bookCode, chapterNumber]);
+    }, [bookCode, chapterNumber, attempt]);
 
     const book = tracker?.books.find((b) => b.code === bookCode);
     const chapter = Number(chapterNumber);
-    const currentChapterKey = `${bookCode}/${chapterNumber}`;
+    const currentChapterKey = `${bookCode}/${chapterNumber}/${attempt}`;
     const showHeader = book !== undefined && Number.isInteger(chapter) && chapter >= 1 && chapter <= book.chapterCount;
 
     const previousChapter = findPreviousChapter(tracker?.books ?? [], book?.code ?? "", chapter);
     const nextChapter = findNextChapter(tracker?.books ?? [], book?.code ?? "", chapter);
+
+    function handleRetry() {
+        setAttempt((previous) => previous + 1);
+    }
 
     function renderContent(): ReactNode {
         if (bookCode === undefined || chapterNumber === undefined) {
@@ -88,7 +93,21 @@ export function PassageView() {
         }
 
         if (state.status === "failed") {
-            return <p>{state.reason === "notFound" ? "The chapter does not exist." : "The passage text isn't available right now. Your progress is not affected."}</p>;
+            if (state.reason === "notFound") {
+                return <p>
+                    The chapter does not exist.
+                </p>;
+            }
+
+            return (
+                <div className="passage-unavailable">
+                    <p>The passage text is not available right now. Your progress is not affected.</p>
+                    <div className="passage-unavailable-actions">
+                        <button type="button" className="passage-retry-button" onClick={handleRetry}>Try again</button>
+                        <Link className="passage-secondary-link" to="/">Back to tracker</Link>
+                    </div>
+                </div >
+            )
         }
 
         return <article className="passage-text">{state.passageResponse.text}</article>;

@@ -65,7 +65,7 @@
   --reading-max: 720px;
 
   /* Chapter cell */
-  --cell-w: 72px;
+  --cell-w: 76px;
   --cell-h: 34px;
   --cell-read-w: 26px;     /* the "Read" link on the right of the cell */
   --cell-gap: 6px;
